@@ -1,5 +1,6 @@
 // backend/middleware/rateLimit.middleware.js
 import rateLimit from 'express-rate-limit';
+import { ipKeyGenerator } from 'express-rate-limit';
 
 // Rate limiting for authentication endpoints
 export const authRateLimit = rateLimit({
@@ -14,10 +15,7 @@ export const authRateLimit = rateLimit({
     // Skip rate limiting for successful requests (optional)
     return false;
   },
-  keyGenerator: (req) => {
-    // Use IP address as the key
-    return req.ip;
-  }
+  keyGenerator: ipKeyGenerator
 });
 
 // General rate limiting for all routes
