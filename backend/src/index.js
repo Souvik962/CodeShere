@@ -7,10 +7,10 @@ import path from "path";
 import { connectDB } from "./lib/db.js";
 import { app, server } from "./lib/socket.js";
 
-// import authRoutes from "./routes/auth.route.js";
-// import postRoutes from "./routes/sendPost.route.js";
-// import notificationRoutes from "./routes/notification.route.js";
-// import adminRoutes from "./routes/admin.route.js";
+import authRoutes from "./routes/auth.route.js";
+import postRoutes from "./routes/sendPost.route.js";
+import notificationRoutes from "./routes/notification.route.js";
+import adminRoutes from "./routes/admin.route.js";
 
 dotenv.config();
 
@@ -30,11 +30,11 @@ app.use(
 );
 
 // Mount routes
-// app.use("/api/auth", authRoutes);
-// app.use("/api/user", authRoutes);
-// app.use("/api/posts", postRoutes);
-// app.use("/api/notifications", notificationRoutes);
-// app.use("/api/admin", adminRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/user", authRoutes);
+app.use("/api/posts", postRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/admin", adminRoutes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
