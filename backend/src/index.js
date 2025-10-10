@@ -21,10 +21,14 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://codeshere.onrender.com",
+    ],
     credentials: true,
   })
 );
+
 
 // Mount routes
 app.use("/api/auth", authRoutes);        // For authentication (signup, login, logout, profile)
