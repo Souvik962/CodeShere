@@ -383,6 +383,42 @@ welcomeToCodeShare();`}
                       <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Code</span>
                     </div>
                   </div>
+
+                  {/* Security Notice */}
+                  <div className="mt-8 p-6 bg-gradient-to-r from-amber-50 via-orange-50 to-red-50 dark:from-amber-900/20 dark:via-orange-900/20 dark:to-red-900/20 border-2 border-amber-300/50 dark:border-amber-600/50 rounded-2xl shadow-lg">
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0 p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl shadow-md">
+                        <AlertCircle className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-bold text-amber-900 dark:text-amber-200 mb-2 flex items-center gap-2">
+                          Security Notice
+                          <Lock className="w-4 h-4" />
+                        </h3>
+                        <ul className="space-y-2 text-sm text-amber-800 dark:text-amber-300">
+                          <li className="flex items-start gap-2">
+                            <span className="text-orange-600 dark:text-orange-400 font-bold mt-0.5">•</span>
+                            <span><strong>Never share</strong> Bank details, passwords, or sensitive information</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-orange-600 dark:text-orange-400 font-bold mt-0.5">•</span>
+                            <span><strong>Remove</strong> personal information like email addresses, phone numbers, credit card info, any type of identification numbers, or addresses</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-orange-600 dark:text-orange-400 font-bold mt-0.5">•</span>
+                            <span><strong>Avoid</strong> sharing any sensitive information</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-orange-600 dark:text-orange-400 font-bold mt-0.5">•</span>
+                            <span><strong>Please</strong> be cautious and think before sharing any information and double check before hitting <b className='text-green-400'>"Share Your Masterpiece"</b></span>
+                          </li>
+                        </ul>
+                        <p className="mt-3 text-xs text-amber-700 dark:text-amber-400 italic">
+                          💡 Remember: Once shared publicly, your code can be seen by anyone. Always review before submitting!
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </form>
               </div>
             </div>

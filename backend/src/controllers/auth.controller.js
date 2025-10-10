@@ -147,10 +147,6 @@ export const login = async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-
-    // Note: CAPTCHA verification is already done in middleware
-    // The captchaToken is included for completeness but verification happens before reaching this controller
-
     generateToken(user._id, res);
 
     res.status(200).json({

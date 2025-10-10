@@ -211,8 +211,8 @@ const LoginPage = () => {
                         <button
                             type="submit"
                             className={`relative w-full h-14 flex justify-center items-center rounded-xl font-bold transition-all duration-300 transform active:scale-95 overflow-hidden ${isCaptchaVerified && !isAnyLoading
-                                    ? "bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl"
-                                    : "bg-gray-400 text-gray-600 cursor-not-allowed"
+                                ? "bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl"
+                                : "bg-gray-400 text-gray-600 cursor-not-allowed"
                                 }`}
                             disabled={isAnyLoading || !isCaptchaVerified}
                         >

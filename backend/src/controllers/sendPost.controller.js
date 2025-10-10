@@ -15,10 +15,29 @@ export const getUsersForSidebar = async (req, res) => {
 
 export const getAllPosts = async (req, res) => {
   try {
-    const posts = await SendPost.find()
+    const loggedInUserId = req.user?._id; // Get the logged-in user ID
+
+    let posts = await SendPost.find()
       .populate('senderId', '-password')
       .populate('comments.author', 'fullName profilePic')
       .sort({ createdAt: -1 }); // Most recent posts first
+
+    // Filter private code for unauthorized users
+    posts = posts.map(post => {
+      const postObj = post.toObject(); // Convert mongoose document to plain object
+
+      // Check if post is private AND user is not the owner
+      if (postObj.privacy === 'private') {
+        const isOwner = loggedInUserId && postObj.senderId._id.toString() === req.user._id.toString();
+
+        if (!isOwner) {
+          postObj.projectCode = "This post is private | You don't have access to view the code. | Don't try to access it.";
+        }
+      }
+
+      return postObj;
+    });
+
     res.status(200).json(posts);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -50,7 +69,7 @@ export const sendPost = async (req, res) => {
 
     // Populate the post with sender information before sending response
     const populatedPost = await SendPost.findById(newPost._id).populate('senderId', '-password');
-    
+
     res.status(201).json(populatedPost);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -62,7 +81,7 @@ export const likePost = async (req, res) => {
   try {
     const postId = req.params.id;
     const userId = req.user._id;
-    
+
     const post = await SendPost.findById(postId);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -73,7 +92,7 @@ export const likePost = async (req, res) => {
     if (!post.likes) post.likes = 0;
 
     const alreadyLiked = post.likedBy.some(id => id.toString() === userId.toString());
-    
+
     if (alreadyLiked) {
       // Unlike the post
       post.likedBy = post.likedBy.filter(id => id.toString() !== userId.toString());
@@ -85,9 +104,9 @@ export const likePost = async (req, res) => {
     }
 
     await post.save();
-    
-    res.status(200).json({ 
-      likes: post.likes, 
+
+    res.status(200).json({
+      likes: post.likes,
       likedBy: post.likedBy,
       isLiked: !alreadyLiked
     });
@@ -124,9 +143,9 @@ export const addComment = async (req, res) => {
     // Populate the comment with author info before sending response
     const updatedPost = await SendPost.findById(postId)
       .populate('comments.author', 'fullName profilePic');
-    
+
     const addedComment = updatedPost.comments[updatedPost.comments.length - 1];
-    
+
     res.status(201).json(addedComment);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });

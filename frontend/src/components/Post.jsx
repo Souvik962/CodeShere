@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Copy, Ellipsis, Globe, Maximize2, MessageCircle, Share2, ThumbsUp, Heart, Send, X, Lock, Users } from 'lucide-react';
 import { usePostStore } from '../store/usePostStore';
+import { useAuthStore } from '../store/useAuthStore';
 import toast from 'react-hot-toast';
 
 const Post = ({ post, currentUser }) => {
   const { _id, senderId, projectName, programmingLanguage, projectCode, privacy, createdAt } = post;
   const user = senderId && typeof senderId === 'object' ? senderId : {};
-  
+  const { authUser } = useAuthStore();
+
   // Get functions from store
   const { likePost, addComment, deleteComment } = usePostStore();
 
@@ -32,14 +34,14 @@ const Post = ({ post, currentUser }) => {
   // Like handler using store
   const handleLike = async () => {
     if (!currentUser || isLikeLoading) return;
-    
+
     setIsLikeLoading(true);
-    
+
     try {
       const response = await likePost(_id);
       setLikes(response.likes);
       setLiked(response.isLiked);
-      
+
       if (response.isLiked) {
         toast.success("❤️ You liked this post!");
       } else {
@@ -116,7 +118,7 @@ const Post = ({ post, currentUser }) => {
     <div className="relative group">
       {/* Gradient border effect */}
       <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-300"></div>
-      
+
       <div className="relative flex flex-col w-full bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 p-6 mb-6 transition-all duration-300 hover:shadow-2xl hover:scale-[1.01]">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
@@ -162,7 +164,7 @@ const Post = ({ post, currentUser }) => {
           <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 dark:from-gray-200 dark:via-gray-300 dark:to-gray-400 bg-clip-text">
             {projectName}
           </h2>
-          
+
           <div className="mb-6 flex items-center gap-3">
             <h3 className='text-lg font-semibold text-gray-600 dark:text-gray-400'>Language:</h3>
             <div className="relative">
@@ -172,12 +174,35 @@ const Post = ({ post, currentUser }) => {
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur opacity-30"></div>
             </div>
           </div>
-          
+
           <div className="relative border border-gray-300/50 dark:border-gray-600/50 rounded-2xl overflow-hidden shadow-lg">
             <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"></div>
             <pre className={`relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-green-400 p-6 overflow-x-auto text-sm transition-all duration-500 ${isCodeExpanded ? 'max-h-none' : 'max-h-80 overflow-y-hidden'
               }`}>
-              <code className="font-mono leading-relaxed">{projectCode}</code>
+              {projectCode === '[PRIVATE]' || (privacy === "private" && authUser?._id !== user._id) ? (
+                <div className="flex flex-col items-center justify-center h-full min-h-[200px] gap-4">
+                  <div className="relative">
+                    <Lock size={64} className="text-red-500/80 animate-pulse" />
+                    <div className="absolute inset-0 bg-red-500/20 blur-xl rounded-full"></div>
+                  </div>
+                  <div className="text-center space-y-2">
+                    <code className="block font-mono text-xl font-bold leading-relaxed text-red-500">
+                      🔒 Private Code
+                    </code>
+                    <code className="block font-mono text-sm leading-relaxed text-red-400/80">
+                      This content is only visible to the contributor
+                    </code>
+                    <code className="block font-mono text-sm leading-relaxed text-red-400/80">
+                      if You want to see this code, please contact the contributor.
+                    </code>
+                  </div>
+                  <div className="px-6 py-2 bg-red-500/10 border border-red-500/30 rounded-full">
+                    <span className="text-xs font-semibold text-red-400">RESTRICTED ACCESS</span>
+                  </div>
+                </div>
+              ) : (
+                <code className="font-mono leading-relaxed">{projectCode}</code>
+              )}
               {!isCodeExpanded && (
                 <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-900 to-transparent"></div>
               )}
@@ -228,11 +253,10 @@ const Post = ({ post, currentUser }) => {
           <button
             onClick={handleLike}
             disabled={isLikeLoading || !currentUser}
-            className={`flex-1 flex justify-center items-center gap-2 p-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${
-              liked 
-                ? "text-blue-600 bg-blue-50 dark:bg-blue-900/20 shadow-lg" 
-                : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50"
-            }`}
+            className={`flex-1 flex justify-center items-center gap-2 p-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${liked
+              ? "text-blue-600 bg-blue-50 dark:bg-blue-900/20 shadow-lg"
+              : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50"
+              }`}
           >
             <ThumbsUp size={20} className={`${liked ? "fill-current" : ""} transition-transform duration-200`} />
             <span>{liked ? "Liked" : "Like"}</span>

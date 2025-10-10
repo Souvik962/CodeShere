@@ -26,7 +26,8 @@ export const generalRateLimit = rateLimit({
     message: "Too many requests, please try again later."
   },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  keyGenerator: ipKeyGenerator
 });
 
 // Strict rate limiting for password reset or other sensitive operations
@@ -35,5 +36,6 @@ export const strictRateLimit = rateLimit({
   max: 3, // limit each IP to 3 requests per hour
   message: {
     message: "Too many requests for this operation. Please try again in an hour."
-  }
+  },
+  keyGenerator: ipKeyGenerator
 });
