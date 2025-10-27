@@ -55,6 +55,15 @@ app.use("/api/posts", postRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/admin", adminRoutes);
 
+// Production static file serving (must come before 404 handler)
+if (config.nodeEnv === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "../frontend/dist/index.html"));
+  });
+}
+
 // Global error handler
 app.use((err, req, res, next) => {
   console.error('Global error handler:', err);
@@ -68,19 +77,13 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({
-    message: 'Route not found',
-    path: req.originalUrl
-  });
-});
-
-if (config.nodeEnv === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "../frontend/dist/index.html"));
+// 404 handler (only for development or API routes not found)
+if (config.nodeEnv === "development") {
+  app.use('*', (req, res) => {
+    res.status(404).json({
+      message: 'Route not found',
+      path: req.originalUrl
+    });
   });
 }
 
