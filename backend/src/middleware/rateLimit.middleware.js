@@ -1,6 +1,5 @@
 // backend/middleware/rateLimit.middleware.js
 import rateLimit from 'express-rate-limit';
-import { ipKeyGenerator } from 'express-rate-limit';
 
 // Rate limiting for authentication endpoints
 export const authRateLimit = rateLimit({
@@ -14,8 +13,7 @@ export const authRateLimit = rateLimit({
   skip: (req) => {
     // Skip rate limiting for successful requests (optional)
     return false;
-  },
-  keyGenerator: ipKeyGenerator
+  }
 });
 
 // General rate limiting for all routes
@@ -26,8 +24,7 @@ export const generalRateLimit = rateLimit({
     message: "Too many requests, please try again later."
   },
   standardHeaders: true,
-  legacyHeaders: false,
-  keyGenerator: ipKeyGenerator
+  legacyHeaders: false
 });
 
 // Strict rate limiting for password reset or other sensitive operations
@@ -36,6 +33,5 @@ export const strictRateLimit = rateLimit({
   max: 3, // limit each IP to 3 requests per hour
   message: {
     message: "Too many requests for this operation. Please try again in an hour."
-  },
-  keyGenerator: ipKeyGenerator
+  }
 });

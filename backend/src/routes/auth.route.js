@@ -4,12 +4,13 @@ import { checkAuth, login, logout, signup, updateProfile, deleteUserPost, sendOt
 import { protectRoute } from "../middleware/auth.middleware.js";
 import { verifyCaptcha } from "../middleware/captcha.middleware.js";
 import { authRateLimit } from "../middleware/rateLimit.middleware.js";
+import { validateSignup, validateLogin, sanitizeInput } from "../middleware/validation.middleware.js";
 
 const router = express.Router();
 
-// Apply CAPTCHA verification and rate limiting to authentication routes
-router.post("/signup", authRateLimit, verifyCaptcha, signup);
-router.post("/login", authRateLimit, verifyCaptcha, login);
+// Apply CAPTCHA verification, validation, and rate limiting to authentication routes
+router.post("/signup", authRateLimit, sanitizeInput, validateSignup, verifyCaptcha, signup);
+router.post("/login", authRateLimit, sanitizeInput, validateLogin, verifyCaptcha, login);
 
 // Social authentication route (no CAPTCHA required as Firebase handles security)
 router.post("/social-auth", authRateLimit, socialAuth);

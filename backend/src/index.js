@@ -6,6 +6,7 @@ import path from "path";
 
 import { connectDB } from "./lib/db.js";
 import { app, server } from "./lib/socket.js";
+import { validateEnvironment, getEnvConfig } from "./lib/env.js";
 
 import authRoutes from "./routes/auth.route.js";
 import postRoutes from "./routes/sendPost.route.js";
@@ -14,7 +15,11 @@ import adminRoutes from "./routes/admin.route.js";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 5001;
+// Validate environment variables
+validateEnvironment();
+const config = getEnvConfig();
+
+const PORT = config.port;
 const __dirname = path.resolve();
 
 app.use(express.json({ limit: '10mb' }));
@@ -24,10 +29,24 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://codeshere.onrender.com",
+      config.clientUrl,
     ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
   })
 );
+
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: config.nodeEnv,
+    version: "1.0.0"
+  });
+});
 
 // Mount routes
 app.use("/api/auth", authRoutes);
@@ -36,7 +55,28 @@ app.use("/api/posts", postRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/admin", adminRoutes);
 
-if (process.env.NODE_ENV === "production") {
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', err);
+
+  const statusCode = err.statusCode || 500;
+  const message = err.message || 'Internal Server Error';
+
+  res.status(statusCode).json({
+    message,
+    ...(config.nodeEnv === 'development' && { stack: err.stack })
+  });
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({
+    message: 'Route not found',
+    path: req.originalUrl
+  });
+});
+
+if (config.nodeEnv === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
   app.get("*", (req, res) => {
@@ -44,7 +84,58 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  connectDB();
+const desiredPort = parseInt(PORT, 10) || 5000;
+
+function startServer(port) {
+  // Listen for listen-errors once so we can retry on EADDRINUSE
+  server.once('error', (err) => {
+    if (err && err.code === 'EADDRINUSE') {
+      console.warn(`Port ${port} is in use. Trying port ${port + 1}...`);
+      // small backoff before retrying
+      setTimeout(() => startServer(port + 1), 500);
+      return;
+    }
+    console.error('Server error:', err);
+    process.exit(1);
+  });
+
+  server.listen(port, () => {
+    console.log(`🚀 Server running on port ${port}`);
+    console.log(`🌍 Environment: ${config.nodeEnv}`);
+    console.log(`🔗 Health check: http://localhost:${port}/api/health`);
+    connectDB();
+  });
+}
+
+startServer(desiredPort);
+
+// Graceful shutdown helpers
+function shutdown(signal) {
+  console.log(`\nReceived ${signal}. Shutting down gracefully...`);
+  server.close((err) => {
+    if (err) {
+      console.error('Error while closing server:', err);
+      process.exit(1);
+    }
+    console.log('Server closed. Exiting process.');
+    process.exit(0);
+  });
+
+  // Force exit if shutdown takes too long
+  setTimeout(() => {
+    console.warn('Forcing shutdown after timeout');
+    process.exit(1);
+  }, 10000).unref();
+}
+
+process.on('SIGINT', () => shutdown('SIGINT'));
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
 });

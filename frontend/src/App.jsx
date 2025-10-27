@@ -17,6 +17,7 @@ import AdminUsersPage from './pages/AdminUsersPage'
 import AdminPostsPage from './pages/AdminPostsPage'
 import AdminSettingsPage from './pages/AdminSettingsPage'
 import SendNotificationPage from './pages/SendNotificationPage'
+import ErrorBoundary from './components/ErrorBoundary'
 
 // Admin Route Protection Component
 const AdminRoute = ({ children }) => {
@@ -52,51 +53,53 @@ function App() {
   }
 
   return (
-    <div className='bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-300'>
-      <Toaster 
-        toastOptions={{
-          className: 'dark:bg-gray-800 dark:text-white',
-          duration: 4000,
-        }}
-      />
-      <Navbar />
-      <Routes>
-        <Route path='/' element={<HomePage />} />
-        <Route path='/login' element={!authUser ?<LoginPage /> :<Navigate to="/" />} />
-        <Route path='/signUp' element={!authUser ?<SignUpPage /> :<Navigate to="/" />} />
-        <Route path='/Profile' element={authUser ?<ProfilePage /> :<Navigate to="/" />} />
-        <Route path='/contributions' element={authUser ?<ContributionsPage /> :<Navigate to="/" />} />
-        <Route path='/notifications' element={authUser ?<NotificationsPage /> :<Navigate to="/" />} />
-        <Route path='/send-notifications' element={authUser ?<SendNotificationPage /> :<Navigate to="/" />} />
-        {/* Admin Routes */}
-        <Route path='/admin' element={
-          <AdminRoute>
-            <AdminDashboard />
-          </AdminRoute>
-        } />
-        <Route path='/admin/dashboard' element={
-          <AdminRoute>
-            <AdminDashboard />
-          </AdminRoute>
-        } />
-        <Route path='/admin/users' element={
-          <AdminRoute>
-            <AdminUsersPage />
-          </AdminRoute>
-        } />
-        <Route path='/admin/posts' element={
-          <AdminRoute>
-            <AdminPostsPage />
-          </AdminRoute>
-        } />
-        <Route path='/admin/settings' element={
-          <AdminRoute>
-            <AdminSettingsPage />
-          </AdminRoute>
-        } />
-      </Routes>
-      <Footer />
-    </div>
+    <ErrorBoundary>
+      <div className='bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-300'>
+        <Toaster
+          toastOptions={{
+            className: 'dark:bg-gray-800 dark:text-white',
+            duration: 4000,
+          }}
+        />
+        <Navbar />
+        <Routes>
+          <Route path='/' element={<HomePage />} />
+          <Route path='/login' element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
+          <Route path='/signUp' element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
+          <Route path='/Profile' element={authUser ? <ProfilePage /> : <Navigate to="/" />} />
+          <Route path='/contributions' element={authUser ? <ContributionsPage /> : <Navigate to="/" />} />
+          <Route path='/notifications' element={authUser ? <NotificationsPage /> : <Navigate to="/" />} />
+          <Route path='/send-notifications' element={authUser ? <SendNotificationPage /> : <Navigate to="/" />} />
+          {/* Admin Routes */}
+          <Route path='/admin' element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          } />
+          <Route path='/admin/dashboard' element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          } />
+          <Route path='/admin/users' element={
+            <AdminRoute>
+              <AdminUsersPage />
+            </AdminRoute>
+          } />
+          <Route path='/admin/posts' element={
+            <AdminRoute>
+              <AdminPostsPage />
+            </AdminRoute>
+          } />
+          <Route path='/admin/settings' element={
+            <AdminRoute>
+              <AdminSettingsPage />
+            </AdminRoute>
+          } />
+        </Routes>
+        <Footer />
+      </div>
+    </ErrorBoundary>
   )
 }
 

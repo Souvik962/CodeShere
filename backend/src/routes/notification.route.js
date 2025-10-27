@@ -14,9 +14,9 @@ const router = express.Router();
 router.patch("/mark-all-read", protectRoute, markAllAsRead);
 
 // Parameterized routes
-router.get("/:userId", protectRoute, getNotifications);
-router.post("/send/:userId", protectRoute, sendNotification);
+router.get("/", protectRoute, getNotifications);
+router.post("/send", protectRoute, sendNotification);
 router.patch("/:notificationId/read", protectRoute, markAsRead);
-router.delete("/:notificationId", protectRoute, deleteNotification); // CHANGED: removed /delete/ prefix
+router.delete("/:notificationId", protectRoute, deleteNotification);
 
 export default router;

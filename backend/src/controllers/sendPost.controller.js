@@ -28,7 +28,7 @@ export const getAllPosts = async (req, res) => {
 
       // Check if post is private AND user is not the owner
       if (postObj.privacy === 'private') {
-        const isOwner = loggedInUserId && postObj.senderId._id.toString() === req.user._id.toString();
+        const isOwner = loggedInUserId && postObj.senderId._id.toString() === loggedInUserId.toString();
 
         if (!isOwner) {
           postObj.projectCode = "This post is private | You don't have access to view the code. | Don't try to access it.";
@@ -40,6 +40,7 @@ export const getAllPosts = async (req, res) => {
 
     res.status(200).json(posts);
   } catch (error) {
+    console.error("Error fetching posts:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
