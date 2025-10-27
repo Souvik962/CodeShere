@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "npm run build:frontend && npm run build:backend",
-    "build:frontend": "npm install --prefix frontend && npm run build --prefix frontend",
+    "build:frontend": "npm install --prefix frontend && npm run build --prefix frontend && mkdir -p build && cp -r frontend/dist/* build/",
     "build:backend": "npm install --prefix backend && echo 'No backend build step'",
     "start": "npm run start --prefix backend"
   },
