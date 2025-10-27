@@ -6,7 +6,8 @@ const EMAIL_HOST = process.env.EMAIL_HOST || null; // e.g. 'smtp.gmail.com' or '
 const EMAIL_PORT = parseInt(process.env.EMAIL_PORT, 10) || 587;
 const EMAIL_SECURE = (process.env.EMAIL_SECURE === 'true') || false; // true for 465
 const EMAIL_USER = process.env.EMAIL_USER || process.env.EMAIL_FROM || null;
-const EMAIL_PASS = process.env.EMAIL_PASS || process.env.SENDGRID_API_KEY || null;
+// Accept either EMAIL_PASS or EMAIL_APP_PASSWORD (your .env uses EMAIL_APP_PASSWORD)
+const EMAIL_PASS = process.env.EMAIL_PASS || process.env.EMAIL_APP_PASSWORD || process.env.SENDGRID_API_KEY || null;
 const EMAIL_FROM = process.env.EMAIL_FROM || EMAIL_USER || 'no-reply@codeshare.local';
 
 // Nodemailer connection options with timeouts to fail fast in production
