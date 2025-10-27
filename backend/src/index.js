@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
+import fs from "fs";
 
 import { connectDB } from "./lib/db.js";
 import { app, server } from "./lib/socket.js";
@@ -57,11 +58,35 @@ app.use("/api/admin", adminRoutes);
 
 // Production static file serving (must come before 404 handler)
 if (config.nodeEnv === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  // Try both possible build locations
+  const buildPath = path.join(__dirname, "../build");
+  const distPath = path.join(__dirname, "../frontend/dist");
 
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "../frontend/dist/index.html"));
-  });
+  // Check which build directory exists
+  const buildExists = fs.existsSync(buildPath);
+  const distExists = fs.existsSync(distPath);
+
+  if (buildExists) {
+    console.log("📁 Using build directory for static files");
+    app.use(express.static(buildPath));
+    app.get("*", (req, res) => {
+      res.sendFile(path.resolve(buildPath, "index.html"));
+    });
+  } else if (distExists) {
+    console.log("📁 Using frontend/dist directory for static files");
+    app.use(express.static(distPath));
+    app.get("*", (req, res) => {
+      res.sendFile(path.resolve(distPath, "index.html"));
+    });
+  } else {
+    console.error("❌ No build directory found! Expected either ../build or ../frontend/dist");
+    app.get("*", (req, res) => {
+      res.status(404).json({
+        message: "Frontend build not found. Please check build process.",
+        error: "No build directory found"
+      });
+    });
+  }
 }
 
 // Global error handler
