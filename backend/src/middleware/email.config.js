@@ -34,6 +34,13 @@ export const transporter = nodemailer.createTransport(transporterOptions);
 
 // Helpful startup check (only logs; do not crash the app in production)
 const testConnection = async () => {
+  // Only attempt verification if we have a host+auth or a SendGrid API key
+  const hasSmtpConfig = Boolean((transporterOptions.host && transporterOptions.auth) || process.env.SENDGRID_API_KEY);
+  if (!hasSmtpConfig) {
+    console.warn('⚠️ Skipping email transporter verification: no SMTP configuration detected (EMAIL_HOST/EMAIL_USER/EMAIL_PASS or SENDGRID_API_KEY).');
+    return;
+  }
+
   try {
     await transporter.verify();
     console.log('✅ Email transporter verified');
@@ -41,7 +48,7 @@ const testConnection = async () => {
     console.error('❌ Email server connection failed:', error && error.message ? error.message : error);
     // Give specific guidance for common cases
     if (process.env.SENDGRID_API_KEY) {
-      console.error('� Using SendGrid SMTP relay. Ensure SENDGRID_API_KEY is valid and SendGrid account is active.');
+      console.error('💡 Using SendGrid SMTP relay. Ensure SENDGRID_API_KEY is valid and SendGrid account is active.');
     } else if (EMAIL_HOST && EMAIL_USER && EMAIL_PASS) {
       console.error('💡 SMTP configured via EMAIL_HOST. Check credentials and that your host allows connections from this environment.');
     } else {
