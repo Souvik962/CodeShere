@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: import.meta.env.MODE === "development" ? "https://codeshere.onrender.com/api" : "/api",
+  baseURL: import.meta.env.MODE === "development" ? "https://codeshere.onrender.com" : "/api",
   withCredentials: true,
   timeout: 30000, // 30 second timeout for email operations
 });
