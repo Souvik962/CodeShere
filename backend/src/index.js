@@ -49,6 +49,23 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+// Root route for development
+if (config.nodeEnv === "development") {
+  app.get("/", (req, res) => {
+    res.json({
+      message: "API Server Running",
+      version: "1.0.0",
+      endpoints: {
+        health: "/api/health",
+        auth: "/api/auth",
+        posts: "/api/posts",
+        notifications: "/api/notifications",
+        admin: "/api/admin"
+      }
+    });
+  });
+}
+
 // Mount routes
 app.use("/api/auth", authRoutes);
 app.use("/api/user", authRoutes);
