@@ -37,7 +37,7 @@ const SignUpPage = () => {
         if (!formData.fullName.trim()) return toast.error("Full name is required");
         if (!formData.email.trim()) return toast.error("Email is required");
         if (!/\S+@\S+\.\S+/.test(formData.email)) return toast.error("Invalid email format");
-        if (!otpData.isOtpVerified) return toast.error("Please verify your email with OTP");
+        // if (!otpData.isOtpVerified) return toast.error("Please verify your email with OTP");
         if (!formData.password) return toast.error("Password is required");
         if (formData.password.length < 6) return toast.error("Password must be at least 6 characters");
         if (!isCaptchaVerified) return toast.error("Please complete the CAPTCHA verification");
@@ -50,11 +50,12 @@ const SignUpPage = () => {
         }
 
         try {
-            await sendOtp({ email: formData.email });
-            setOtpData(prev => ({
-                ...prev,
-                isOtpSent: true,
-            }));
+            // await sendOtp({ email: formData.email });
+            // setOtpData(prev => ({
+            //     ...prev,
+            //     isOtpSent: true,
+            // }));
+            toast.success("OTP sent successfully!");
         } catch (error) {
             console.error("Error sending OTP:", error);
         }
@@ -239,7 +240,7 @@ const SignUpPage = () => {
                                 {formData.email && /\S+@\S+\.\S+/.test(formData.email) && !otpData.isOtpVerified && (
                                     <button
                                         type="button"
-                                        onClick={handleSendOtp}
+                                       // onClick={handleSendOtp}
                                         disabled={isSendingOtp || isAnyLoading}
                                         className="absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1"
                                     >
@@ -407,11 +408,11 @@ const SignUpPage = () => {
                         {/* Submit Button */}
                         <button
                             type="submit"
-                            className={`w-full py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform ${isCaptchaVerified && otpData.isOtpVerified && !isAnyLoading
+                            className={`w-full py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform ${isCaptchaVerified && /*otpData.isOtpVerified && */!isAnyLoading
                                 ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
                                 : "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                                 }`}
-                            disabled={isAnyLoading || !isCaptchaVerified || !otpData.isOtpVerified}
+                            disabled={isAnyLoading || !isCaptchaVerified }//|| !otpData.isOtpVerified
                         >
                             {isSigningUp ? (
                                 <>

@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import SendPost from "../models/sendPost.model.js";
 import cloudinary from "../lib/cloudinary.js";
-import { sendVerificationEmail } from "../middleware/email.config.js";
+import emailService from "../middleware/email.config.js";
 
 // In-memory OTP storage (in production, use Redis or database)
 const otpStore = new Map();
@@ -55,7 +55,7 @@ export const signup = async (req, res) => {
   }
 };
 
-export const sendOtp = async (req, res) => {
+export const sendOtpEmail = async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -82,8 +82,7 @@ export const sendOtp = async (req, res) => {
         otpStore.delete(key);
       }
     }
-
-    await sendVerificationEmail(email, otp);
+    await emailService.sendOtpEmail(email, otp);
 
     res.status(200).json({
       message: "OTP sent successfully",
@@ -320,3 +319,6 @@ export const socialAuth = async (req, res) => {
     });
   }
 };
+
+// Backwards-compatible alias: some routes import `sendOtp`
+export { sendOtpEmail as sendOtp };

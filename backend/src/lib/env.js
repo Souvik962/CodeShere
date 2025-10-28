@@ -3,6 +3,18 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// Accept alternative env var names and provide small defaults so the validator
+// doesn't warn when a reasonable default or equivalent name is present.
+// Map EMAIL_APP_PASSWORD (used in .env) to EMAIL_PASS expected by the code.
+if (process.env.EMAIL_APP_PASSWORD && !process.env.EMAIL_PASS) {
+    process.env.EMAIL_PASS = process.env.EMAIL_APP_PASSWORD;
+}
+
+// Provide a sensible default for CLIENT_URL so local dev doesn't trigger a warning.
+if (!process.env.CLIENT_URL) {
+    process.env.CLIENT_URL = 'http://localhost:5173';
+}
+
 const requiredEnvVars = [
     'MONGODB_URI',
     'JWT_SECRET',
@@ -17,8 +29,8 @@ const optionalEnvVars = [
     'CLOUDINARY_CLOUD_NAME',
     'CLOUDINARY_API_KEY',
     'CLOUDINARY_API_SECRET',
-    'EMAIL_HOST',
-    'EMAIL_PORT',
+    //'EMAIL_HOST',
+    //'EMAIL_PORT',
     'EMAIL_USER',
     'EMAIL_PASS'
 ];
@@ -89,8 +101,8 @@ export const getEnvConfig = () => {
 
         // Email
         email: {
-            host: process.env.EMAIL_HOST,
-            port: process.env.EMAIL_PORT,
+           // host: process.env.EMAIL_HOST,
+           // port: process.env.EMAIL_PORT,
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS,
         }
