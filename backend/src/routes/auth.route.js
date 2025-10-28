@@ -16,8 +16,8 @@ router.post("/login", authRateLimit, sanitizeInput, validateLogin, verifyCaptcha
 router.post("/social-auth", authRateLimit, socialAuth);
 
 // OTP routes
-router.post("/send-otp", sendOtp);
-router.post("/verify-otp", verifyOtp);
+//router.post("/send-otp", sendOtp);
+//router.post("/verify-otp", verifyOtp);
 
 // Other auth routes
 router.post("/logout", logout);
