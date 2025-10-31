@@ -29,7 +29,6 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://codeshere.onrender.com",
       config.clientUrl,
     ],
     credentials: true,
@@ -146,8 +145,6 @@ function startServer(port) {
 
   server.listen(port, () => {
     console.log(`🚀 Server running on port ${port}`);
-    console.log(`🌍 Environment: ${config.nodeEnv}`);
-    console.log(`🔗 Health check: http://localhost:${port}/api/health`);
     connectDB();
   });
 }
