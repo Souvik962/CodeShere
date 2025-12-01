@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      "http://localhost:5173",               // local development
+      "https://codeshere-main.onrender.com/",                         //"http://localhost:5173",               // local development
       process.env.CLIENT_URL || "*",         // production
     ],
     credentials: true,
