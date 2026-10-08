@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      "https://codeshere-main.onrender.com/",                         //"http://localhost:5173",               // local development
+      "https://code-shere-7pnw.vercel.app/",                         //"http://localhost:5173",               // local development
       process.env.CLIENT_URL || "*",         // production
     ],
     credentials: true,
