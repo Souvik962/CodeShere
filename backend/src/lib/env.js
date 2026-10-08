@@ -12,7 +12,7 @@ if (process.env.EMAIL_APP_PASSWORD && !process.env.EMAIL_PASS) {
 
 // Provide a sensible default for CLIENT_URL so local dev doesn't trigger a warning.
 if (!process.env.CLIENT_URL) {
-    process.env.CLIENT_URL = 'http://localhost:5173';
+    process.env.CLIENT_URL = 'https://code-shere-7pnw.vercel.app';
 }
 
 const requiredEnvVars = [
@@ -86,7 +86,7 @@ export const getEnvConfig = () => {
         nodeEnv: process.env.NODE_ENV || 'development',
 
         // Client
-        clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+        clientUrl: process.env.CLIENT_URL || 'https://code-shere-7pnw.vercel.app',
 
         // CAPTCHA
         recaptchaSecretKey: process.env.RECAPTCHA_SECRET_KEY,
